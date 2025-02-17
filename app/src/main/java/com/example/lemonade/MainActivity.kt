@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -61,7 +65,7 @@ fun LemonadeWithClickableImageAndInstruction(modifier: Modifier = Modifier) {
 
     var step by remember { mutableStateOf(1) }
 
-    var squeezes by remember { mutableStateOf(0)}
+    var squeezes by remember { mutableStateOf(0) }
 
     val imageResource = when (step) {
         1 -> R.drawable.lemon_tree
@@ -85,10 +89,11 @@ fun LemonadeWithClickableImageAndInstruction(modifier: Modifier = Modifier) {
     }
 
     val accentButtonColor = ButtonDefaults.buttonColors(
-        containerColor = colorResource(  R.color.teal_200)
+        containerColor = colorResource(R.color.teal_200)
 
     )
 
+//    val tertiaryColorScheme = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
     // start adding UI widgets of the lemonade app
 
     // the outer UI widget is a column
@@ -99,50 +104,60 @@ fun LemonadeWithClickableImageAndInstruction(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
 
-        Button(onClick = {
+        MaterialTheme.colorScheme.tertiaryContainer
 
-            Log.i("lemonade", "step before action: $step")
+        Button(
+            onClick = {
 
-            when (step) {
-                1 -> {
-                    squeezes = (2..4).random()
-                    Log.i("lemonade", "initialize in step #1 squeezes: $squeezes")
-                    step++
-                }
-                2 -> {
-                    if (squeezes == 1) {
+                Log.i("lemonade", "step before action: $step")
+
+                when (step) {
+                    1 -> {
+                        squeezes = (2..4).random()
+                        Log.i("lemonade", "initialize in step #1 squeezes: $squeezes")
                         step++
-                    } else {
-                        squeezes--
-                        Log.i("lemonade", "decrement in step #2 squeezes: $squeezes")
                     }
+
+                    2 -> {
+                        if (squeezes == 1) {
+                            step++
+                        } else {
+                            squeezes--
+                            Log.i("lemonade", "decrement in step #2 squeezes: $squeezes")
+                        }
+                    }
+
+                    3 -> step++
+                    else -> step = 1 // when 4+
                 }
-                3 -> step++
-                else -> step = 1 // when 4+
-            }
 
-            Log.i("lemonade", "step after action: $step")
+                Log.i("lemonade", "step after action: $step")
 
-        },
-            shape = RoundedCornerShape(40.dp),
-            border = BorderStroke(2.dp, Color(105,205,216,255)),
+            },
+            shape = RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)),
+            border = BorderStroke(2.dp, Color(105, 205, 216, 255)),
             colors = accentButtonColor
         ) {
 
             // Then add the image of the step of enjoying lemonade
 
             Image(
+                modifier = Modifier
+                    .width(dimensionResource(R.dimen.button_image_width))
+                    .height(dimensionResource(R.dimen.button_image_height))
+                    .padding(dimensionResource(R.dimen.button_interior_padding)),
                 painter = painterResource(imageResource),
                 contentDescription = stringResource(contentDescriptionResource)
             )
 
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_vertical)))
 
         Text(
             stringResource(instructionResource),
             modifier = Modifier,
+            style = MaterialTheme.typography.bodyLarge,
             fontSize = 18.sp,
             textAlign = TextAlign.Center
 
